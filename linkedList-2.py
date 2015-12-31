@@ -1,6 +1,3 @@
-### Linked lists (ch2, cracking the coding interview)
-
-
 
 ###creating a linked list
 
