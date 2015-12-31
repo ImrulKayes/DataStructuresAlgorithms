@@ -187,3 +187,4 @@ solution=Solution()
 #print solution.repeatedCharacter("abca")
 #print solution.floatToBinary(.625)
 print solution.decToBibary(7)
+
