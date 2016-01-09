@@ -1,4 +1,25 @@
 class Solution(object):
+    def hammingWeight(self, n):
+        "how many 1's in n?"
+        count=0
+        x=1
+        for i in range(32):
+            if n & x:
+                count+=1
+            x=x<< 1
+        return count
+
+    def reverseBits(self, n):
+        "reverse n by bits. 1011 will br 1101"
+        x=1
+        res=0
+        for i in range(32):
+            "starting last bit, if that is 1 make corresponding bit of res 1" 
+            if n & x:
+                res=res | 1 << (31-i)
+            x=x<<1
+        return res
+    
     def singleNumber(self, nums):
         # A xor A =0, A xor B xor A =B
         if not nums: return 
@@ -145,6 +166,12 @@ class Solution(object):
                 output.append('0')
             num=num/2
         return ''.join(output[::-1])
+    
+    def binaryToDec(self,nums):
+        res=0
+        for num in nums:
+            res=res*2 + int(num)
+        return res
 
     def floatToBinary(self,num):
         # num is between 0 t0 1
@@ -160,7 +187,7 @@ class Solution(object):
                 num=r
         return ''.join(output)
             
-    def stringToLong(self,st):
+    def stringToLong(self,st):  # or simply this is atoi
         # for 123 we can go either from front e.g., 12=1*10 +2, 123= 12*100 =3 or from back 23= 2*10 +3 , front is good
         if st[0]=='-':
             st1=st[1:]
@@ -181,10 +208,120 @@ class Solution(object):
             return -1*res
         else:
             return res
-            
+        
+    def myAtoi(self, str):
+        """
+        * convert a string to int
+        """
+        st=str
+        if not st: return 0
+
+        "get rid of front whitespaces"
+        i=0
+        while st[i]==" ":
+            i+=1
+        st=st[i:]
+        if not st: return 0
+        
+        "what is the sign?"
+        if st[0]=='+':
+            st1=st[1:]
+            flag=0
+        elif st[0]=='-':
+            st1=st[1:]
+            flag=1
+        else:
+            st1=st
+            flag=0
+
+        "convert until end of the string or any invalid chars"
+        res=0
+        mul=0
+        for i in range(len(st1)):
+            if not (st1[i]>='0' and st1[i]<='9'):
+                break
+            res=res*10+(ord(st1[i])-ord('0'))
+
+        "we can only return 2**31 -1 to -2**31" 
+        if flag:
+            res=-1*res
+            return -2**31 if res< -2**31 else res 
+        return (2**31) -1 if res>(2**31) -1 else res
+
+    def convertToTitle(self, n):
+        # given 1= A and Z=26, convert an integer to nums,e.g., 28=AC=1*26+3, 53=BA=2*26+1
+        ans = ''
+        while n:
+            ans = chr(ord('A') + (n - 1) % 26) + ans
+            n = (n - 1) / 26
+        return ans
+
+    def titleToNumber(self, s):
+        length = len(s)
+        total = 0
+        for i in range(length):
+            total=total*26+(ord(s[i])-ord('A')+1)
+        return total
+        
+    def GCDUtil(self,a,b):
+        while a:
+            t=b%a
+            b=a
+            a=t
+        return b
+
+    def GCD(self,nums):
+        # return gcd of an array of integrs
+        nums=sorted(nums)
+        ans=nums[0]
+        for num in nums[1:]:
+            ans=self.GCDUtil(ans,num)
+        return ans
+
+    def isUgly(self, num):
+        """
+        Write a program to check whether a given number is an ugly number.
+        Ugly numbers are positive numbers whose prime factors only include 2,3,5
+        Below lessons from that a number can be presented with only prime factors
+        """
+        if num>0:
+            for p in [2,3,5]:
+                while num%p==0:
+                    num=num/p
+        return num==1
+
+    def prime(nums):
+        # efficiently generate nums number of prime number
+        # we will incrementally generate prime numbers, for a number if it is divisible by any of previously generated prime numbers then this is not prime.
+        # note that any number can be expressed by prime factors
+        
+        output=[2]
+        for i in range(1,nums):
+            nextNumber=output[-1]+1
+            while True:
+                found=True
+                for num in output:
+                    if nextNumber%num==0:
+                        found=False
+                        break
+                if found:
+                    output.append(nextNumber)
+                    break
+                nextNumber+=1
+        print output
+        
+    def isPowerOfThree(self, n):
+        if n==0: return False
+        if n==1: return True
+        x=1
+        while x<n:
+            x=x*3
+        return x==n
+    
 solution=Solution()
 #print solution.singleNumber([1,1,1,2,2,-3])
 #print solution.repeatedCharacter("abca")
 #print solution.floatToBinary(.625)
-print solution.decToBibary(7)
-
+#print solution.decToBibary(7)
+#print solution.GCD([9,21,12,15,27])
+print solution.binaryToDec('1010')

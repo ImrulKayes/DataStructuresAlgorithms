@@ -97,9 +97,9 @@ class Solution:
             return False
         mid=int(len(nums)/2)
         if target<nums[mid]:
-            return self.BinarySearch(nums[0:mid],target)
+            return self.BinarySearch(nums[:mid],target)
         elif target>nums[mid]:
-            return self.BinarySearch(nums[mid:len(nums)],target)
+            return self.BinarySearch(nums[mid:],target)
         else:
             return True
 
@@ -116,6 +116,43 @@ class Solution:
                 else:
                     first = midpoint+1
         return False
+
+    def firstBadVersion(self, n):
+        """
+        n versions, find the first bad version https://leetcode.com/problems/first-bad-version/
+        """
+        if n <= 1:
+            return n
+        front = 1
+        end = n
+        while front < end:
+            middle = (front + end)//2
+            if isBadVersion(middle):
+                end = middle
+            else:
+                front = middle + 1
+        return front
+    
+    def firstBadVersion(self, n):
+        if n == 0:
+            return 0
+        return self.search(1, n)
+
+    def search(self, l, r):
+        mid = (l+r)//2
+        if isBadVersion(mid):
+            r = mid - 1
+            if not isBadVersion(r):
+                return mid
+            else:
+                return self.search(l, r)
+        else:
+            l = mid + 1
+            if isBadVersion(l):
+                return l
+            else:
+                return self.search(l, r)
+            
 
     def magicIndex(self,nums):
         # return i if nums[i]==i, where nums is sorted
@@ -158,83 +195,6 @@ class Solution:
                 else:
                     start=mid+1
 
-    def searchMatrix1(self, matrix, target):
-        # this is O(nlogm) solution, for each row we are doing binary search, a better O(logn+logm) solution is below
-        rows,cols=len(matrix),len(matrix[0])
-        for i in range(rows):
-            low,high=0,cols-1
-            while low<=high:
-                mid=(low+high)/2
-                if matrix[i][mid]==target:
-                    return True
-                else:
-                    if target<matrix[i][mid]:
-                        high=mid-1
-                    else:
-                        low=mid+1
-        return False
-
-    def searchMatrix(self, matrix, target):
-        # easy!, two binary search, first through all first columns to get which row might have the number
-        # then another binary search to that row to get the element
-        # low in first search gives the index who has greater value than the target, so basically we have to search previous row
-
-        low = 0
-        high = len(matrix)-1
-        while low<=high:
-            midpoint = (low + high)//2
-            if matrix[midpoint][0] == target:
-                return True
-            else:
-                if target < matrix[midpoint][0]:
-                    high = midpoint-1
-                else:
-                    low = midpoint+1
-
-        if low>0:
-            i=low-1
-        else:
-            i=low
-
-        low,high=0,len(matrix[0])-1
-        while low<=high:
-            midpoint = (low + high)//2
-            if matrix[i][midpoint] == target:
-                return True
-            else:
-                if target < matrix[i][midpoint]:
-                    high = midpoint-1
-                else:
-                    low = midpoint+1
-        return False
-
-    def searchMatrix1(self, matrix, target):
-        # This also simple, based on previous searchMatrix
-        # we start with first column an find a 'low' (next line), then we have to search only low number of rows for a search starting at second line and the process will continue
-        # low in first search gives the index who has greater value than the target, so basically we have to search previous row
-
-        main=matrix
-        m,n=len(matrix),len(matrix[0])
-        for j in range(n):        
-            low = 0
-            high = m-1
-            while low<=high:
-                midpoint = (low + high)//2
-                if matrix[midpoint][j] == target:
-                    return True
-                else:
-                    if target < matrix[midpoint][j]:
-                        high = midpoint-1
-                    else:
-                        low = midpoint+1
-
-            if low>0:
-                i=low-1
-            else:
-                i=low
-            #print i
-            m=i+1
-        return False
 
     def myPow(self, x, n):
         # 2^4=2^2*2^2
@@ -253,70 +213,6 @@ class Solution:
         else:
             return temp * temp * x
 
-    def findMin(self, nums):
-    #Suppose a sorted array is rotated at some pivot unknown to you beforehand. (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2). Find the minimum element.You may assume no duplicate exists in the array.
-    #This problems seems like a binary search, and the key is how to break the array to two parts, so that we only need to work on half of the array each time, i.e.,when to select the left half and when to select the right half.
-    #If we pick the middle element, we can compare the middle element with the left-end element. If middle is less than leftmost, the left half should be selected; if the middle is greater than the leftmost, the right half should be selected. Using simple recursion, this problem can be solve in time log(n).
-    #In addition, in any rotated sorted array, the rightmost element should be less than the left-most element, otherwise, the sorted array is not rotated and we can simply pick the leftmost element as the minimum.
-
-        l = len(nums)-1 
-        if l==0:
-            return nums[0]
-        mid = l/2
-
-        if nums[mid]<nums[0]:
-            # right side is sorted, so rotation has been done on leftside, so exclude first element and include mid and search there
-            return self.findMin(nums[1:mid+1])  
-        else:
-            return self.findMin(nums[mid+1:])
-
-    def search(self, nums, target):
-        # search is  a rotated sorted array, when duplicates are allowed
-        left,right=0,len(nums)-1
-        while left<=right:
-            mid=(left+right)/2
-            if nums[mid]==target:
-                return True
-            # if left is sorted, then target might be there if inside, or target in other side
-            if nums[left]<nums[mid]:
-                if nums[left]<=target and target<nums[mid]:
-                    right=mid-1
-                else:
-                    left=mid+1
-            # if right is sorted, then target might be there if inside or target in other side
-            elif nums[left]>nums[mid]:
-                if nums[mid]<target and target<=nums[right]:
-                    left=mid+1
-                else:
-                    right=mid-1
-            # else, we have one element left and that is not equal to target
-            else:
-                left+=1
-        return False
-
-
-    def findPeakElement(self, nums):
-        # A peak element is an element that is greater than its neighbors. Given an array nums with nums[i]!=nums[i+1],num[-1]=num[n]=-inf find a peak element and return its index. e.g. [1,2,3,1] 3 is a peak element and your function should return the index number 2.
-        # The array may contain multiple peaks, in that case return the index to any one of the peaks is fine. 
-
-        # binary search, if mid is less than mid-1 then serach in left, else search right
-        # we always will get a peak in either side, if we were to get a global peak then binary search will not work
-        
-        if not nums:
-            return -1
-        low, high = 0, len(nums) - 1
-        while low <= high:
-            mid = (low + high) / 2
-            if low==high:
-                return low
-
-            if nums[mid]>nums[mid+1] and nums[mid]>nums[mid-1]:
-                return mid
-
-            if nums[mid] < nums[mid+1]:
-                low = mid + 1
-            else:
-                high = mid-1
 
     
     def numIslands(self, grid):

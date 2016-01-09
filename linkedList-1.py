@@ -56,6 +56,12 @@ class linkedList:
             print prev.val
             prev=prev.next
 
+    def deleteNode(self, node):
+        "Write a function to delete a node (except the tail) in a singly linked list, given only access to that node."
+        "just copy next node value to this node and delete next node"
+        if not node:    return
+        node.val=node.next.val
+        node.next=node.next.next
 
     def reverseList(self, head):
         if not head or not head.next:   return
@@ -85,7 +91,7 @@ class linkedList:
                 currD=current
             # else not need to do anything with dummy's current node
             current=current.next
-        # finally, remember to set dummy's current's next node to None
+        # finally, remember to set dummy's current's next node to None, although we delete middle elemnets we don't have to do it, but considering deleting last element
         currD.next=None
         return dummy.next
                 
@@ -163,6 +169,7 @@ class linkedList:
             for i in range(lenB-lenA):
                 curB = curB.next
         # now when two points's will meet at intersection
+        # even when no intersection, they will meet at None
         while curB != curA:
             curB = curB.next
             curA = curA.next
@@ -417,4 +424,3 @@ l.ReversePrint(head)
 #l.printList(x)
 #x=l.addTwoNumbers(headA,headB)
 #l.printList(x)
-
