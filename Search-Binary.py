@@ -16,7 +16,8 @@ class Solution:
         
     'Recursive Binary search: using varying indexes'
     'always note that l says left index and r says right index, l<=r means we have at least one element'
-    def binarySearch(self, nums,l, r,target):
+    def binarySearch(self, nums,l, r,target):
+
         if l>r:
             return False
         mid=(l+r)/2
@@ -30,10 +31,10 @@ class Solution:
     'Iterative Binary search: using varying array indexes'
     'what conditions it fails? when target< nums, target>nums, target within the nums range but not present'
     'in those cases l>r, either l gives 0 or >0, l denotes first number greater than target'
-    'In binary search if element is not found and if low>0, then low will give the index of the element just
+    'In binary search if element is not found and if low>0, then low will give the index of the element just'
     'greater than the target, so if low=0 then all elements are greater than target. Say 10,20,30,40 finding 0 will give low=0, finding 50 will give low=4, finding 32 will give low=3.'
     
-    def binarySearch(self, nums,target):
+    def binarySearch(self, nums,target):
         l,r=0,len(nums)-1
         while l<=r:
             mid=(l+r)/2
@@ -85,6 +86,20 @@ class Solution:
                 return l
             else:
                 return self.search(l, r)
+
+    def searchMaxIncreasingDecreasing(self,nums):
+        "Given an array of integers which is initially increasing and then decreasing, find the maximum value in the array. 8, 10, 20, 80, 100, 200, 400, 500, 3, 2, 1 will return 500"
+        "compare the mid with left and right element"
+        
+        l,r=0,len(nums)-1
+        while l<=r:
+            mid=(l+r)/2
+            if nums[mid]>nums[mid-1] and nums[mid]>nums[mid+1]:
+                return nums[mid]
+            elif nums[mid]>nums[mid-1] and nums[mid]<nums[mid+1]:
+                l=mid+1
+            else:
+                r=mid-1
 
             
     def magicIndex(self,nums):

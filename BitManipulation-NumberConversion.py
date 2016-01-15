@@ -48,6 +48,28 @@ class Solution(object):
                 res |= rem * (1 << i)
         return res
 
+    def singleNumber(self, nums):
+        "in nums exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once."
+        "those two numbers at least one bit that are not the same, so xoring all elemens will give where those two numbers are difference beacuse other numbers appears twice and their xor is 0, and dont effect"
+        "Find out an arbitrary set bit (for example, the rightmost set bit)."
+        "In the second pass, we divide all numbers into two groups, one with the aforementioned bit set, another with the aforementinoed bit unset. Two different numbers we need to find must fall into thte two distrinct groups.
+        "XOR numbers in each group, we can find a number in either group."
+        
+        res=nums[0]
+        for num in nums[1:]:
+            res=res^num
+        "x & (-x) : Returns the rightmost 1 in binary representation of x"
+        "Therefore (-x) will have all the bits flipped that are on the left of the rightmost 1 in x. So x & (-x) will return rightmost 1."
+        res&=-res
+        output=[0,0]
+        for num in nums:
+            if num&res:
+                output[0]^=num
+            else:
+                output[1]^=num
+        return output
+        
+
     def swapNumber(self,a,b):
         # Others
         # swap two numbers without temporary variable
@@ -209,43 +231,43 @@ class Solution(object):
         else:
             return res
         
-    def myAtoi(self, str):
-        """
-        * convert a string to int
-        """
-        st=str
-        if not st: return 0
+    def myAtoi(self, str):
+        """
+        convert a string to int
+        """
+        st=str
+        if not st: return 0
 
         "get rid of front whitespaces"
-        i=0
-        while st[i]==" ":
-            i+=1
-        st=st[i:]
-        if not st: return 0
-        
+        i=0
+        while st[i]==" ":
+            i+=1
+        st=st[i:]
+        if not st: return 0
+    
         "what is the sign?"
-        if st[0]=='+':
-            st1=st[1:]
-            flag=0
-        elif st[0]=='-':
-            st1=st[1:]
-            flag=1
-        else:
-            st1=st
-            flag=0
+        if st[0]=='+':
+            st1=st[1:]
+            flag=0
+        elif st[0]=='-':
+            st1=st[1:]
+            flag=1
+        else:
+            st1=st
+            flag=0
 
         "convert until end of the string or any invalid chars"
-        res=0
-        mul=0
-        for i in range(len(st1)):
-            if not (st1[i]>='0' and st1[i]<='9'):
-                break
-            res=res*10+(ord(st1[i])-ord('0'))
+        res=0
+        mul=0
+        for i in range(len(st1)):
+            if not (st1[i]>='0' and st1[i]<='9'):
+                break
+            res=res*10+(ord(st1[i])-ord('0'))
 
         "we can only return 2**31 -1 to -2**31" 
-        if flag:
-            res=-1*res
-            return -2**31 if res< -2**31 else res 
+        if flag:
+            res=-1*res
+            return -2**31 if res< -2**31 else res 
         return (2**31) -1 if res>(2**31) -1 else res
 
     def convertToTitle(self, n):
@@ -310,13 +332,104 @@ class Solution(object):
                 nextNumber+=1
         print output
         
-    def isPowerOfThree(self, n):
-        if n==0: return False
-        if n==1: return True
-        x=1
-        while x<n:
-            x=x*3
+    def isPowerOfThree(self, n):
+        if n==0: return False
+        if n==1: return True
+        x=1
+        while x<n:
+            x=x*3
         return x==n
+
+    def evaluateExpression(self,token):
+        "100*(2+12)/14==100"
+        "consider +,-,*,/ operands and (,)"
+        value=[]
+        ops=[]
+        i=0
+
+        "cannot use for because we will change i e.g., 300"
+        while i<len(token):
+            "if space skip this"
+            if token[i]==' ':
+                i+=1
+            elif token[i]>='0' and token[i]<='9':
+                "if number the append to value"
+                st=[]
+                while i<len(token) and token[i]>='0' and token[i]<='9':
+                    st.append(token[i])
+                    i+=1
+                value.append(int(''.join(st)))               
+            elif token[i]=='(':
+                "if ( append to ops"
+                ops.append(token[i])
+                i+=1
+                
+            elif token[i]==')':
+                "if ) evaluate the expression until we find beginning (, precession doesnt matter e.g., 2*3+5"
+                while ops[-1]!='(':
+                    value.append(self.eval(ops.pop(),value.pop(),value.pop()))
+                ops.pop()
+                i+=1
+                
+            elif token[i] in '+-*/':
+                'if operator evalutes all operator has greater presedence than this operator'
+                while ops and self.hasPrecedence(token[i],ops[-1]):
+                    value.append(self.eval(ops.pop(),value.pop(),value.pop()))
+                ops.append(token[i])
+                i+=1            
+
+        'Entire expression has been parsed at this point, all operator have same presendence, apply remaining, ops to remaining values'
+        while ops:
+            value.append(self.eval(ops.pop(),value.pop(),value.pop()))
+        return value.pop()
+
+    def hasPrecedence(self,op1,op2):
+        'as we appended parentheses also in the ops queue 1+(2* will give us situation in presedence checking'
+        if op2=='(':
+            return False
+        if op1 in '*/' and op2 in '+-':
+            return False
+        else:
+            return True
+        
+    def eval(self,op,b,a):
+        if op=='+': return a+b
+        if op=='-': return a-b
+        if op=='*': return a*b                                             
+        if op=='/':
+            if b==0:
+                raise ValueError('Cannot divide by zeor')
+            return a/b
+        return 0
+
+    def evalRPN(self, tokens):
+        "Evaluate reverse polish notation https://leetcode.com/problems/evaluate-reverse-polish-notation/"
+        "21+3*-->(2+1)*3"
+        
+        if len(tokens)==0:
+            return 
+        q=[]
+        q.append(int(tokens[0]))
+        for i in range(1,len(tokens)):
+            if tokens[i] in ('+','-','*','/'):
+                opt=tokens[i]
+                b=q.pop()
+                a=q.pop()
+                if opt=='+':
+                    q.append(a+b)
+                if opt=='-':
+                    q.append(a-b)
+                if opt=='*':
+                    q.append(a*b)
+                if opt=='/':
+                    if (a<0 and b>0) or (a>0 and b<0):
+                        q.append((-1)*int(abs(a)/abs(b)))
+                    else:
+                        q.append(int(abs(a)/abs(b)))
+            else:
+                q.append(int(tokens[i]))
+        return q.pop()
+
     
 solution=Solution()
 #print solution.singleNumber([1,1,1,2,2,-3])

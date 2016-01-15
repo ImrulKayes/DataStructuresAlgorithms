@@ -7,6 +7,7 @@ class ListNode:
         self.prev=None
 
 class linkedList:
+    "we want to use doubly linkedlist beacause it has O(1) deletion/insertion cost compared to O(n) if the node is given"
     def __init__(self):
         self.head=ListNode(0)
         self.tail=ListNode(0)
