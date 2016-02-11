@@ -99,41 +99,6 @@ class Solution(object):
                 checker=checker | (1<<index)
         return True
 
-    def romanToInt(self, s):
-        # reverse the string, pop two (if exists) and match with dictionary,very naive!
-        if len(s)==0:
-            return None
-        dic={}
-        dic['I']=1
-        dic['IV']=4
-        dic['V']=5
-        dic['IX']=9
-        dic['X']=10
-        dic['XL']=40
-        dic['L']=50
-        dic['XC']=90
-        dic['C']=100
-        dic['CD']=400
-        dic['D']=500
-        dic['CM']=900
-        dic['M']=1000
-
-        s=s[::-1]
-        s1=list(s)
-        num=0
-        while s1:
-            a=s1.pop()
-            if s1:
-                b=s1.pop()
-                c=a+b
-                if dic.has_key(''.join(c)):
-                    num+=dic[''.join(c)]
-                else:
-                    s1.append(b)
-                    num+=dic[a]
-            else:
-                num+=dic[a]
-        return num
 
     def romanToInt(self, s):
         # smart one here. IX=(-1)+10=9, the following utilizes this
@@ -155,20 +120,7 @@ class Solution(object):
     def intToRoman(self, num):
         if num==0:
             return None
-        dic={}
-        dic[1]='I'
-        dic[4]='IV'
-        dic[5]='V'
-        dic[9]='IX'
-        dic[10]='X'
-        dic[40]='XL'
-        dic[50]='L'
-        dic[90]='XC'
-        dic[100]='C'
-        dic[400]='CD'
-        dic[500]='D'
-        dic[900]='CM'
-        dic[1000]='M'
+        dic={1000:"M", 900:"CM", 500:"D", 400:"CD",100:"C", 90:"XC", 50:"L", 40:"XL",10:"X", 9:"IX", 5:"V", 4:"IV", 1:"I"}
         divisors=sorted(dic)[::-1]
         output=[]
         while num>0:
@@ -267,7 +219,7 @@ class Solution(object):
         "we can only return 2**31 -1 to -2**31" 
         if flag:
             res=-1*res
-            return -2**31 if res< -2**31 else res 
+            return -2**32 if res< -2**32 else res 
         return (2**31) -1 if res>(2**31) -1 else res
 
     def convertToTitle(self, n):

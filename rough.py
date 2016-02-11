@@ -1,1 +1,48 @@
-class Solution:    def evaluateExpression(self,token):        "100*(2+12)/14==100"        "consider +,-,*,/ operands and (,)"        value=[]        ops=[]        i=0        "cannot use for because we will change i e.g., 300"        while i<len(token):            "if space skip this"            if token[i]==' ':                i+=1            elif token[i]>='0' and token[i]<='9':                "if number the append to value"                st=[]                while i<len(token) and token[i]>='0' and token[i]<='9':                    st.append(token[i])                    i+=1                value.append(int(''.join(st)))                           elif token[i]=='(':                "if ( append to ops"                ops.append(token[i])                i+=1                            elif token[i]==')':                "if ) evaluate the expression until we find beginning (, precession doesnt matter e.g., 2*3+5"                while ops[-1]!='(':                    value.append(self.eval(ops.pop(),value.pop(),value.pop()))                ops.pop()                i+=1                            elif token[i] in '+-*/':                'if operator evalutes all operator has greater presedence than this operator'                while ops and self.hasPrecedence(token[i],ops[-1]):                    value.append(self.eval(ops.pop(),value.pop(),value.pop()))                ops.append(token[i])                i+=1                    'Entire expression has been parsed at this point, all operator have same presendence, apply remaining, ops to remaining values'        while ops:            value.append(self.eval(ops.pop(),value.pop(),value.pop()))        return value.pop()    def hasPrecedence(self,op1,op2):        'as we appended parentheses also in the ops queue 1+(2* will give us situation in presedence checking'        if op2=='(':            return False        if op1 in '*/' and op2 in '+-':            return False        else:            return True            def eval(self,op,b,a):        if op=='+': return a+b        if op=='-': return a-b        if op=='*': return a*b                                                     if op=='/':            if b==0:                raise ValueError('Cannot divide by zeor')            return a/b        return 0solution=Solution()print solution.evaluateExpression("100*(2+12)/14")
+class TreeNode:
+    def __init__(self,val):
+        self.val=val
+        self.left=None
+        self.right=None
+
+def BSTtoDLink(root):
+    if not root:
+        return None
+    
+    headLeft=BSTtoDLink(root.left)
+    headRight=BSTtoDLink(root.right)
+
+    if headLeft:
+        head=headLeft
+        while headLeft.right:
+            headLeft=headLeft.right
+        headLeft.right=root
+        root.left=headLeft
+        root.right=headRight
+        if headRight:
+            headRight.left=root
+        return head
+    else:
+        if headRight:
+            root.right=headRight
+            root.left=None
+            headRight.left=root
+            return root
+        else:
+            return root
+
+
+a=TreeNode(10)
+b=TreeNode(12)
+c=TreeNode(15)
+d=TreeNode(25)
+e=TreeNode(30)
+f=TreeNode(36)
+a.left=b
+a.right=c
+c.left=f
+b.left=d
+b.right=e
+root=BSTtoDLink(a)
+while root:
+    print root.val
+    root=root.right

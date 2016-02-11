@@ -147,6 +147,28 @@ class linkedList:
             
         return dummy.next
 
+    def oddEvenList(self, head):
+        """
+        we have a list 1,2,3,4,5 make it 1,3,5,2,4
+        """
+        if not head or not head.next:
+            return head
+        currA=headA=ListNode(0)
+        currB=headB=ListNode(0)
+        count=0
+        while head:
+            count+=1
+            if count%2==1:
+                currA.next=head
+                currA=currA.next
+            else:
+                currB.next=head
+                currB=currB.next
+            head=head.next
+        currA.next=headB.next
+        currB.next=None
+        return headA.next
+
     def getIntersectionNode(self, headA, headB):
        # Write a program to find the node at which the intersection of two singly linked lists begins.
        # get the lenghth difference first and advance the current pointer of larger length upto that difference
@@ -175,53 +197,20 @@ class linkedList:
             curA = curA.next
         return curA
 
-
     def mergeTwoLists(self, l1, l2):
-        # marge two sorted lists into a list
-        currentA=l1
-        currentB=l2
-        head=None
-        
-        if currentA==None and currentB==None: 
-            return None
-        if currentA==None or currentB==None: 
-            if currentA==None: 
-                return currentB
-            else:
-                return currentA
-        
-        dummy=head
-        head=ListNode(0)
-        dummy=head
-        # set dummy's next node as the lowest node
-        while currentA and currentB:
-            if currentA.val<=currentB.val:
-                head.next=currentA
-                head=currentA
-                currentA=currentA.next
-            else:
-                head.next=currentB
-                head=currentB
-                currentB=currentB.next
+            vhead = curr = ListNode(0)
+            while l1 and l2:
+                if l1.val <= l2.val:
+                    curr.next = l1
+                    l1 = l1.next
+                else:
+                    curr.next = l2
+                    l2 = l2.next
+                curr = curr.next
+            curr.next = l1 or l2
+            return vhead.next 
 
-        # if both lists are exhausted
-        if currentA==None and currentB==None: 
-            head.next=None
-            return dummy.next
-        # if any of the list exists
-        else:
-            if currentA:
-                while currentA:
-                    head.next=currentA
-                    head=currentA
-                    currentA=currentA.next
-            else:
-                while currentB:
-                    head.next=currentB
-                    head=currentB
-                    currentB=currentB.next
-        head.next=None
-        return dummy.next
+
 
     def swapPairs1(self, head):
         # we are taking 2 pairs at a time and adjusting the next pointers, flag is for setting the head, e.g., 1,2,3,4 see below

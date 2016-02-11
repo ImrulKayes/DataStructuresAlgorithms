@@ -41,10 +41,8 @@ class linkedList:
 
     def sortList(self, head):
         # apply mergesort, divide the whole list into two and merge
-        
-        if head==None:
-            return None
-        if head.next==None:
+
+        if not head or not head.next:
             return head
         
         mainHead=head
@@ -61,39 +59,7 @@ class linkedList:
         headB=self.sortList(head)
         newHead=self.merge(headA,headB)
         return newHead
-        
-    def merge(self,headA,headB):
-        # the concise merge version is below
-        if headA==None and headB==None:
-            return None
-        if headA==None:
-            return headB
-        if headB==None:
-            return headA
-        # fix the head
-        if headA.val<=headB.val:
-            head=headA
-            headA=headA.next
-        else:
-            head=headB
-            headB=headB.next
-        current=head
-        
-        while headA and headB:
-            prev=current
-            if headA.val<=headB.val:
-                current=headA
-                prev.next=current
-                headA=headA.next
-            else:
-                current=headB
-                prev.next=current
-                headB=headB.next               
-        if headA:
-                current.next=headA             
-        if headB:
-                current.next=headB
-        return head
+
 
     def merge(self, l1, l2):
             vhead = curr = ListNode(0)
@@ -172,7 +138,7 @@ class linkedList:
     def reverseAlternate(self,head,k):
         #Others
         #reverse every alternate k nodes
-        #rirst alternate k nodes and then skip k nodes, do it recursively
+        #first alternate k nodes and then skip k nodes, do it recursively
         count=0
         prev=None
         curr=head
@@ -249,8 +215,8 @@ headA=l.getHead()
 #x=l.merge(headA,headB)
 #x=l.sortList(headA)
 #l.printList(headA)
-#l.printList(l.insertionSortList(headA))
+l.printList(l.insertionSortList(headA))
 #l.printList(l.swapPairs(headA))
 #l.printList(l.deleteDuplicates(None))
 #l.printList(l.partition(headA,3))
-l.printList(l.reverseAlternate(headA,3))
+#l.printList(l.reverseAlternate(headA,3))

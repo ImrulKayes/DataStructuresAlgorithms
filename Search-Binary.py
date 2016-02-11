@@ -46,6 +46,31 @@ class Solution:
                 l=mid+1
         return False
 
+    def searchRange(self, nums, target):
+        """
+        Given a sorted array of integers, find the starting and ending position of a given target value.
+        [1,2,3,3,3,4,5] and target=3 will return [2,4]
+        """
+        if not nums:    return [-1,-1]
+        
+        low,high=0,len(nums)-1
+        
+        while low<=high:
+            mid=(low+high)/2
+            if target>nums[mid]:
+                low=mid+1
+            elif target<nums[mid]:
+                high=mid-1
+            else:
+                start,end=mid,mid
+                while start>=0 and nums[mid]==nums[start]:
+                    start-=1
+                while end<=len(nums)-1 and nums[mid]==nums[end]:
+                    end+=1
+                return [start+1,end-1]
+        return [-1,-1]
+
+
     def firstBadVersion(self, n):
         """
         n versions, find the first bad version https://leetcode.com/problems/first-bad-version/
@@ -134,7 +159,7 @@ class Solution:
 
         while start<=end:
             mid=(start+end)/2
-            # if following doesn't happen then either mid is the ans/ ans is the lower half
+            # if following doesn't happen then either mid is the ans/ ans is the upper half
             if mid*mid>x:
                 end=mid-1
             else:
