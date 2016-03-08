@@ -56,6 +56,28 @@ class linkedList:
             print prev.val
             prev=prev.next
 
+    def removeNthFromEnd(self, head, n):
+        """
+        remove n'th element from the tail
+        """
+        count=0
+        curr=head
+        while curr:
+            count+=1
+            curr=curr.next
+        
+        if count==n:
+            return head.next
+        
+        i=0
+        curr=head
+        while i<(count-n-1):
+            curr=curr.next
+            i+=1
+            
+        curr.next=curr.next.next
+        return head
+
     def deleteNode(self, node):
         "Write a function to delete a node (except the tail) in a singly linked list, given only access to that node."
         "just copy next node value to this node and delete next node"
@@ -95,9 +117,24 @@ class linkedList:
         currD.next=None
         return dummy.next
                 
+    def deleteDuplicates(self,head):
+        # Given a sorted linked list, delete all duplicates such that each element appear only once.        
+        if not head or not head.next:
+            return head
+        
+        l1=dummy=head
+        curr=head.next
+        
+        while curr:
+            if curr.val!=l1.val:
+                l1.next=curr
+                l1=l1.next
+            curr=curr.next
+        l1.next=None
+        return dummy
+        
             
     def deleteDuplicates(self, head):
-        # Given a sorted linked list, delete all duplicates such that each element appear only once.
         # an iterative solution is below
         if head==None or head.next==None:
             return head
@@ -126,7 +163,7 @@ class linkedList:
         return head
 
     def deleteDuplicates(self, head):
-        # againa another one
+        # again another one
         if not head:    return None
         dummy=ListNode(0)
         dummy.next=head
@@ -270,20 +307,26 @@ class linkedList:
     def detectCycle(self, head):
         # this is called Floyd's cycle-finding algorithm, also know as tortoise and hare algorithm
         #http://yucoding.blogspot.com/2013/12/leetcode-question-linked-list-cycle-ii.html
-        if head==None:
+
+        if not head or not head.next:
             return None
-        first = head
-        second=head
-        while second.next and second.next.next:
-            first = first.next
-            second = second.next.next
-            if first == second:
-                second=head
-                while second!=first:
-                    second=second.next
-                    first=first.next
-                return first
-        return None
+        if head.next==head:
+            return head
+            
+        slow=head
+        fast=head
+        while fast:
+            if fast.next and fast.next.next:
+                fast=fast.next.next
+                slow=slow.next
+                if fast==slow:
+                    fast=head
+                    while fast!=slow:
+                        fast=fast.next
+                        slow=slow.next
+                    return fast
+            else:
+                return None  
 
     def reorderList(self, head):
         # Reorder to L(0)->l(n)->L(1)->L(n-1)...
@@ -316,6 +359,50 @@ class linkedList:
             current=nextNode
         # current node next should be none after reordering
         current.next=None
+
+    def reorderList(self, head):
+        """
+        same idea above, but without using queue, we can reverse the second half and take one from first and one from reversed
+        """
+        
+        if not head or not head.next:
+            return 
+            
+        count=0
+        curr=head
+        while curr:
+            count+=1
+            curr=curr.next
+        
+        curr=head
+        for i in range(count/2):
+            curr=curr.next
+        
+        prev=None
+        while curr:
+            oldPrev=prev
+            prev=curr
+            curr=curr.next
+            prev.next=oldPrev
+            
+        curr1=head
+        curr2=prev
+        dummy=l=ListNode(0)
+        for i in range(count/2):
+            oldcurr1=curr1.next
+            oldcurr2=curr2.next
+            l.next=curr1
+            curr1.next=curr2
+            l=curr2
+            curr1=oldcurr1
+            curr2=oldcurr2
+        # for odd we will have one in middle
+        if count%2==1:
+            l.next=curr1
+            curr1.next=None
+
+        else:
+            l.next=None
 
     def rotateRight(self, head, k):
         # Given a list, rotate the list to the right by k places, where k is non-negative.

@@ -29,7 +29,42 @@ class Solution:
             output+=right
         return output
 
-    def quicksort(myList, start, end):
+    def inversions(self,nums,low,high):
+        'count inversion in an array, if i<j but num[i]>num[j] then this is an inversion'
+        '[2,4,1,3,5] total inversion is inversion of [2,4,1]+inversion of [3,5] and inversion of [1,2,4] and [3,5]'
+        'so modified merge should work'
+        
+        if (high-low)<=1:
+            return nums[low:high+1],0
+        
+        mid=(low+high)//2
+
+        left,leftCount=self.inversions(nums,low,mid)
+        right,rightCount=self.inversions(nums,mid+1,high)
+
+        i,j=0,0
+        res=[]
+        count=0
+        
+        while i<len(left) and j<len(right):
+            if left[i]<right[j]:
+                res.append(left[i])
+                i+=1
+            else:
+                res.append(right[j])
+                j+=1
+                count+=len(left)-i
+        
+
+        if i<=len(left)-1:
+            res+=left[i:]
+        if j<=len(right)-1:
+            res+=right[j:]
+
+        return res,count+leftCount+rightCount
+
+
+    def quicksort(self,nums, l, r):
         # get a pivot (left of pivot are samller numvbers and right is greater), recursively sort left and right of the pivot
         # Advantages: One of the fastest algorithm on average. Doesn't need additional memory i.e. it's an in-place sorting algorithm.
         # Disadvantages: Worst Case complexity is O(N^2),e.g, sorting 1,2,3,4,5
@@ -37,42 +72,48 @@ class Solution:
         # Quick Sort doesn't require additional memory but the running time is not guaranteed.
 
         # this gurantees the the algorithm is terminating, base case
-        if start < end:
+        if l < r:
             # partition the list
-            pivot = partition(myList, start, end)
+            pivot = self.partition(nums, l, r)
             # sort both halves
-            quicksort(myList, start, pivot-1)
-            quicksort(myList, pivot+1, end)
-        return myList
+            quicksort(nums, l, pivot-1)
+            quicksort(nums, pivot+1, r)
+
     
 
-    def partition(myList, start, end):
-        pivot = myList[start]
-        left = start+1
-        right = end
-        done = False
-        while not done:
-            # go until a larger element than pivot is found 
-            while left <= right and myList[left] <= pivot:
-                left = left + 1
-                
+    def quickSelect(self,nums,l,r,k):
+        'find kth smallest in nums'
+        'we are doing quicksort but just recursing one direction'
+        pivot=self.partition(nums,l,r)
+        if k==pivot:
+            return nums[k-1]
+        elif k<pivot:
+            return self.quickSelect(nums,l,pivot-1,k)
+        else:
+            return self.quickSelect(nums,pivot+1,r,k)
+
+    def partition(self,nums,l,r):
+        index=l
+
+        l=l+1
+        while l<=r:
+            # go until a larger element than pivot is found
+            while l<=r and nums[l]<=nums[index]:
+                l+=1
             # go until a smaller element than pivot is found 
-            while myList[right] >= pivot and right >=left:
-                right = right -1
+            while l<=r and nums[r]>=nums[index]:
+                r-=1
+            # swap places
+            if l<=r:
+                temp=nums[l]
+                nums[l]=nums[r]
+                nums[r]=temp
+        # swap right with start
+        temp=nums[index]
+        nums[index]=nums[r]
+        nums[r]=temp
+        return r
 
-            if right < left:
-                done= True
-            else:
-                # swap places
-                temp=myList[left]
-                myList[left]=myList[right]
-                myList[right]=temp
-
-        # swap start with myList[right]
-        temp=myList[start]
-        myList[start]=myList[right]
-        myList[right]=temp
-        return right
 
     def CountingSort(self,nums):
         # we need the range as maxs

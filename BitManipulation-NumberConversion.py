@@ -219,7 +219,7 @@ class Solution(object):
         "we can only return 2**31 -1 to -2**31" 
         if flag:
             res=-1*res
-            return -2**32 if res< -2**32 else res 
+            return -2**31 if res< -2**31 else res 
         return (2**31) -1 if res>(2**31) -1 else res
 
     def convertToTitle(self, n):

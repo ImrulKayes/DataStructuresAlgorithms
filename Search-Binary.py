@@ -17,7 +17,6 @@ class Solution:
     'Recursive Binary search: using varying indexes'
     'always note that l says left index and r says right index, l<=r means we have at least one element'
     def binarySearch(self, nums,l, r,target):
-
         if l>r:
             return False
         mid=(l+r)/2
@@ -46,29 +45,71 @@ class Solution:
                 l=mid+1
         return False
 
-    def searchRange(self, nums, target):
-        """
+    def searchRange(self, nums, target):
+
+        """
         Given a sorted array of integers, find the starting and ending position of a given target value.
-        [1,2,3,3,3,4,5] and target=3 will return [2,4]
-        """
-        if not nums:    return [-1,-1]
-        
-        low,high=0,len(nums)-1
-        
-        while low<=high:
-            mid=(low+high)/2
-            if target>nums[mid]:
-                low=mid+1
-            elif target<nums[mid]:
-                high=mid-1
-            else:
-                start,end=mid,mid
-                while start>=0 and nums[mid]==nums[start]:
-                    start-=1
-                while end<=len(nums)-1 and nums[mid]==nums[end]:
-                    end+=1
-                return [start+1,end-1]
+        [1,2,3,3,3,4,5] and target=3 will return [2,4]
+        Following solution is ok, but worst case O(n), better solution is below
+        """
+        if not nums:    return [-1,-1]
+        low,high=0,len(nums)-1
+        
+        while low<=high:
+            mid=(low+high)/2
+            if target>nums[mid]:
+                low=mid+1
+
+            elif target<nums[mid]:
+                high=mid-1
+            else:
+                start,end=mid,mid
+                while start>=0 and nums[mid]==nums[start]:
+                    start-=1
+                while end<=len(nums)-1 and nums[mid]==nums[end]:
+                    end+=1
+                return [start+1,end-1]
         return [-1,-1]
+
+
+
+    def firstIndex(self,nums,low,high,target):
+        if low>high:
+            return -1
+        mid=(low+high)/2
+        if target<nums[mid]:
+            return self.firstIndex(nums,low,mid-1,target)
+        elif target>nums[mid]:
+            return self.firstIndex(nums,mid+1,high,target)
+        else:
+            found=self.firstIndex(nums,low,mid-1,target)
+            if found==-1:
+                return mid
+            else:
+                return found
+
+    def lastIndex(self,nums,low,high,target):
+        if low>high:
+            return -1
+        mid=(low+high)/2
+        if target<nums[mid]:
+            return self.lastIndex(nums,low,mid-1,target)
+        elif target>nums[mid]:
+            return self.lastIndex(nums,mid+1,high,target)
+        else:
+            found=self.lastIndex(nums,mid+1,high,target)
+            if found==-1:
+                return mid
+            else:
+                return found
+
+
+    def countOccurrences(self,nums,target):
+        'count the number of occurrences of target in nums'
+        'find the first and last index of the target using binary search'
+        'occurrences is last-first+1 O(logn) complexity'
+        
+        return self.lastIndex(nums,0,len(nums)-1,target)-self.firstIndex(nums,0,len(nums)-1,target)+1
 
 
     def firstBadVersion(self, n):
@@ -117,6 +158,9 @@ class Solution:
         "compare the mid with left and right element"
         
         l,r=0,len(nums)-1
+        if r<=1:
+            return max(nums)
+        
         while l<=r:
             mid=(l+r)/2
             if nums[mid]>nums[mid-1] and nums[mid]>nums[mid+1]:
@@ -262,7 +306,33 @@ class Solution:
             # right side is sorted, so rotation has been done on leftside, so exclude first element and include mid and search there
             return self.findMin(nums[1:mid+1])  
         else:
-            return self.findMin(nums[mid+1:])
+            return self.findMin([nums[0]]+nums[mid+1:])
+
+    def search(self, nums, target):
+        """
+        Search in a rotated sorted array
+        """
+        l,r=0,len(nums)-1
+        while l<=r:
+            mid=(l+r)/2
+            if nums[mid]==target:
+                return mid
+
+            # if left is sorted, then target might be there if inside, or target in other side            
+            if nums[l]<=nums[mid]:
+                if target>=nums[l] and target<=nums[mid]:
+                    r=mid-1
+                else:
+                    l=mid+1
+
+            else:
+            # if right is sorted, then target might be there if inside or target in other side
+                if target>nums[mid] and target<=nums[r]:
+                    l=mid+1
+                else:
+                    r=mid-1
+        return -1
+
 
     def search(self, nums, target):
         # search is  a rotated sorted array, when duplicates are allowed
